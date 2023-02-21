@@ -40,14 +40,16 @@ class TimePlannerTitle extends StatelessWidget {
               title,
               style: titleStyle ?? const TextStyle(fontWeight: FontWeight.w600),
             ),
-            const SizedBox(
-              height: 3,
-            ),
-            Text(
-              date ?? '',
-              style: dateStyle ??
-                  const TextStyle(color: Colors.grey, fontSize: 12),
-            ),
+            if ((date ?? '').isNotEmpty) ...[
+              const SizedBox(
+                height: 3,
+              ),
+              Text(
+                date ?? '',
+                style: dateStyle ??
+                    const TextStyle(color: Colors.grey, fontSize: 12),
+              ),
+            ]
           ],
         ),
       ),

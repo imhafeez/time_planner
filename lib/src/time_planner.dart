@@ -167,6 +167,7 @@ class _TimePlannerState extends State<TimePlanner> {
             ),
             Expanded(
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ScrollConfiguration(
