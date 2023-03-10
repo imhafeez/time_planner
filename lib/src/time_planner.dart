@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:time_planner/src/config/global_config.dart' as config;
 import 'package:time_planner/src/time_planner_style.dart';
@@ -30,17 +32,20 @@ class TimePlanner extends StatefulWidget {
   /// Whether time is displayed in 24 hour format or am/pm format in the time column on the left.
   final bool use24HourFormat;
 
+  final bool showLineForCurrentTime;
+
   /// Time planner widget
-  const TimePlanner({
-    Key? key,
-    required this.startHour,
-    required this.endHour,
-    required this.headers,
-    this.tasks,
-    this.style,
-    this.use24HourFormat = false,
-    this.currentTimeAnimation,
-  }) : super(key: key);
+  const TimePlanner(
+      {Key? key,
+      required this.startHour,
+      required this.endHour,
+      required this.headers,
+      this.tasks,
+      this.style,
+      this.use24HourFormat = false,
+      this.currentTimeAnimation,
+      this.showLineForCurrentTime = true})
+      : super(key: key);
   @override
   _TimePlannerState createState() => _TimePlannerState();
 }
@@ -53,6 +58,7 @@ class _TimePlannerState extends State<TimePlanner> {
   TimePlannerStyle style = TimePlannerStyle();
   List<TimePlannerTask> tasks = [];
   bool? isAnimated = true;
+  Timer? currentTimeLineTimer;
 
   /// check input value rules
   void _checkInputValue() {
@@ -120,10 +126,18 @@ class _TimePlannerState extends State<TimePlanner> {
         }
       }
     });
+
+    if (widget.showLineForCurrentTime) {
+      currentTimeLineTimer =
+          Timer.periodic(const Duration(minutes: 1), (timer) {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   @override
   void dispose() {
+    currentTimeLineTimer?.cancel();
     super.dispose();
   }
 
@@ -227,12 +241,12 @@ class _TimePlannerState extends State<TimePlanner> {
     if (style.showScrollBar!) {
       return Scrollbar(
         controller: mainVerticalController,
-        isAlwaysShown: true,
+        thumbVisibility: true,
         child: SingleChildScrollView(
           controller: mainVerticalController,
           child: Scrollbar(
             controller: mainHorizontalController,
-            isAlwaysShown: true,
+            thumbVisibility: true,
             child: SingleChildScrollView(
               controller: mainHorizontalController,
               scrollDirection: Axis.horizontal,
@@ -300,6 +314,19 @@ class _TimePlannerState extends State<TimePlanner> {
                               ],
                             ),
                             for (int i = 0; i < tasks.length; i++) tasks[i],
+                            if (widget.showLineForCurrentTime)
+                              Positioned(
+                                  top: (((DateTime.now().hour -
+                                                  config.startHour) +
+                                              ((DateTime.now().minute) / 60)) *
+                                          config.cellHeight!)
+                                      .toDouble(),
+                                  left: 0,
+                                  right: 0,
+                                  child: Container(
+                                    height: 1,
+                                    color: Colors.blue,
+                                  ))
                           ],
                         ),
                       ),
@@ -371,6 +398,18 @@ class _TimePlannerState extends State<TimePlanner> {
                         ],
                       ),
                       for (int i = 0; i < tasks.length; i++) tasks[i],
+                      if (widget.showLineForCurrentTime)
+                        Positioned(
+                            top: (((DateTime.now().hour - config.startHour) +
+                                        ((DateTime.now().minute) / 60)) *
+                                    config.cellHeight!)
+                                .toDouble(),
+                            left: 0,
+                            right: 0,
+                            child: Container(
+                              height: 1,
+                              color: Colors.blue,
+                            ))
                     ],
                   ),
                 ),
