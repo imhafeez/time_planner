@@ -191,6 +191,7 @@ class _TimePlannerState extends State<TimePlanner> {
                       physics: const NeverScrollableScrollPhysics(),
                       controller: timeVerticalController,
                       child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           Column(
@@ -202,7 +203,7 @@ class _TimePlannerState extends State<TimePlanner> {
                               for (int i = widget.startHour;
                                   i <= widget.endHour;
                                   i++)
-                                Padding(
+                                Container(
                                   // we need some additional padding horizontally if we're showing in am/pm format
                                   padding: EdgeInsets.symmetric(
                                     horizontal: !config.use24HourFormat ? 4 : 0,
